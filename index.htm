@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
     <title>AZ Printing</title> 
 
-    <link rel="stylesheet" href="testing.css"> 
+    <link rel="stylesheet" href="style.css"> 
     <link rel="icon" type="img" href="logo.png"> 
 
 </head> 
@@ -62,3 +62,39 @@
             <button class="btn" id="input-file-btn">INPUT FILE</button> 
         </div> 
     </div> 
+
+    <!--This part is for the modal pop up-->
+    <div id="service-modal" class="modal"> 
+        <div class="modal-content"> 
+            <span class="close-btn" id="close-modal">&times;</span> 
+            <h2 id="modal-title">Service Details</h2> 
+            <p id="modal-description">Details about the service will appear here.</p> 
+             
+            <div class="modal-body"> 
+                <label for="service-options">Available Options / Sizes:</label> 
+                <select id="service-options"> 
+                    <!-- Populated dynamically via pure Python --> 
+                </select>    
+
+                <label for="service-quantity">Quantity:</label> 
+
+                <input type="number" id="service-quantity" value="1" min="1"> 
+ 
+                <button class="modal-submit-btn" id="modal-submit">Confirm Service</button> 
+            </div> 
+        </div> 
+    </div>
+
+    <div id="about-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="close-about-modal">&times;</span>
+            <h2>About AZ Printing Shop</h2>
+            <p style="margin-top: 15px; color: #555; line-height: 1.6;">
+                Welcome to AZ Printing Shop! We are dedicated to delivering top-tier printing, photo printing, photocopying, and lamination services. Where quality meets the page, we strive to provide fast, reliable, and affordable services for all your document and creative needs.
+            </p>
+        </div>
+    </div>
+
+    <!--Ends here-->
+
+</body>
