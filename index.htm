@@ -8,6 +8,9 @@
     <link rel="stylesheet" href="style.css"> 
     <link rel="icon" type="img" href="logo.png"> 
 
+    <link rel="stylesheet" href="https://pyscript.net/releases/2024.11.1/core.css" /> 
+    <script type="module" src="https://pyscript.net/releases/2024.11.1/core.js"></script>
+
 </head> 
 <body> 
     <div class="header"> 
@@ -96,5 +99,93 @@
     </div>
 
     <!--Ends here-->
+
+    <script type="py">
+        from js import document, alert 
+        from pyodide.ffi import create_proxy 
+        
+        from js import document, alert, window
+        from pyodide.ffi import create_proxy
+
+        #SERVICE MODALS -------------------------------------------
+
+        SERVICES_DATA = { 
+            "Printing": { 
+                "description": "High-quality document printing in Black & White or Colored.", 
+                "options": ["A4 - Black & White", "A4 - Color", "Letter - Black & White", "Letter - Color", "Legal - Black & White", "Legal - Color"] 
+            }, 
+
+            "Photo Printing": { 
+                "description": "Premium quality photo prints on high-gloss photo paper.", 
+                "options": ["2x2 Photo", "1x1 Photo", "Passport Size", "4R (4x6)", "5R (5x7)", "8R (8x10)"] 
+            }, 
+
+            "Photo copy": { 
+                "description": "Fast and clear document photocopying services.", 
+                "options": ["A4 Photocopy", "Letter Photocopy", "Legal Photocopy", "ID Card Copy (2-sided)"] 
+            }, 
+
+            "Laminate": { 
+                "description": "Protective film lamination to preserve important documents.", 
+                "options": ["ID Card Lamination", "A4 Lamination", "Letter Lamination", "Legal Lamination"] 
+            } 
+        } 
+    
+
+        # Grab DOM elements using Python 
+
+        modal = document.getElementById("service-modal") 
+        modal_title = document.getElementById("modal-title") 
+        modal_desc = document.getElementById("modal-description") 
+        options_select = document.getElementById("service-options") 
+        quantity_input = document.getElementById("service-quantity") 
+        
+
+        def open_modal(service_name): 
+            data = SERVICES_DATA.get(service_name, {}) 
+            modal_title.innerText = service_name 
+            modal_desc.innerText = data.get("description", "") 
+            
+
+            # Clear and populate dropdown options using pure Python loop 
+
+            options_select.innerHTML = "" 
+            for opt in data.get("options", []): 
+                option_element = document.createElement("option") 
+                option_element.text = opt 
+                option_element.value = opt 
+                options_select.appendChild(option_element) 
+
+            
+            # Show the modal box 
+
+            modal.style.display = "flex" 
+        
+
+        def close_modal(event=None): 
+            modal.style.display = "none"
+        
+
+        # Handler ----------------------------------------------------------
+        
+        def make_handler(service_name): 
+            def handle(event): 
+                event.preventDefault() 
+                open_modal(service_name) 
+            return create_proxy(handle) 
+        
+
+        # Bind Python functions directly to menu click events 
+
+        document.getElementById("service-printing").addEventListener("click", make_handler("Printing")) 
+        document.getElementById("service-photo").addEventListener("click", make_handler("Photo Printing")) 
+        document.getElementById("service-photocopy").addEventListener("click", make_handler("Photo copy")) 
+        document.getElementById("service-laminate").addEventListener("click", make_handler("Laminate")) 
+        
+        # Bind modal action buttons using create_proxy 
+
+        document.getElementById("close-modal").addEventListener("click", create_proxy(close_modal)) 
+        document.getElementById("modal-submit").addEventListener("click", create_proxy(confirm_service))
+    </script>
 
 </body>
