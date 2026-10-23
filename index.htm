@@ -11,6 +11,13 @@
     <link rel="stylesheet" href="https://pyscript.net/releases/2024.11.1/core.css" /> 
     <script type="module" src="https://pyscript.net/releases/2024.11.1/core.js"></script>
 
+    <!-- Firebase App (Core) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <!-- Firebase Realtime Database -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <!-- Firebase Storage (for files) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
+
 </head> 
 <body> 
     <div class="header"> 
@@ -37,8 +44,10 @@
                     <div class="contact"> 
                         <button>Contact</button> 
                         <div class="content2"> 
-                            <a href="#"><img src="facebook.png" alt="facebook">Facebook</a> 
-                            <a href="#"><img src="instagram.png" alt="instagram">Instagram</a> 
+                            <a href="https://www.facebook.com/plulz.zed11" target="_blank">
+                                <img src="facebook.png" alt="facebook">Facebook</a> 
+                            <a href="https://www.instagram.com/arcenal.zdd/" target="_blank">
+                                <img src="instagram.png" alt="instagram">Instagram</a> 
                         </div> 
                     </div> 
  
@@ -106,6 +115,57 @@
         
         from js import document, alert, window
         from pyodide.ffi import create_proxy
+
+        # --- FIREBASE REALTIME DATABASE INITIALIZATION ---
+        # Create a native JavaScript Object for Firebase configuration
+        js_config = window.Object.new()
+        js_config.apiKey = "AIzaSyDO_Sx88rEhCKMbIdORpvFJyPa_4W7y7GA"
+        js_config.authDomain = "az-printing-shop.firebaseapp.com"
+        js_config.databaseURL = "https://az-printing-shop-default-rtdb.firebaseio.com"
+        js_config.projectId = "az-printing-shop"
+        js_config.storageBucket = "az-printing-shop.appspot.com"
+        js_config.messagingSenderId = "183475267885"
+        js_config.appId = "1:183475267885:web:4d7bd493cf383d3054cba4"
+
+        if not window.firebase.apps.length:
+            window.firebase.initializeApp(js_config)
+
+        db = window.firebase.database()  # Realtime Database reference
+        storage = window.firebase.storage()
+
+        def confirm_service(event=None):
+            selected_option = options_select.value
+            quantity = quantity_input.value
+            title = modal_title.innerText
+            file_input = document.getElementById("file-upload-input")
+            
+            if file_input.files.length == 0:
+                alert("Please select a file to upload first using 'INPUT FILE'!")
+                return
+
+            file = file_input.files.item(0)
+            file_name = file.name
+
+            try:
+                # 1. Upload file to Firebase Storage
+                storage_ref = storage.ref().child(f"print_files/{file_name}")
+                storage_ref.put(file)
+
+                # 2. Construct JS Object for Firebase Database
+                order_data = window.Object.new()
+                order_data.service = title
+                order_data.option = selected_option
+                order_data.quantity = int(quantity)
+                order_data.fileName = file_name
+
+                # Push to Realtime Database
+                db.ref("orders").push(order_data)
+
+                alert(f"Successfully sent {quantity}x {title} ({selected_option}) and file '{file_name}' to Realtime Database!")
+                close_modal()
+
+            except Exception as e:
+                alert(f"Error saving to Realtime Database: {str(e)}")
 
         #SERVICE MODALS -------------------------------------------
 
