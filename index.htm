@@ -164,6 +164,62 @@
 
         def close_modal(event=None): 
             modal.style.display = "none"
+
+        #------------------------------------------------------------------------------------------
+        # Grab DOM elements
+        file_input = document.getElementById("file-upload-input")
+        input_btn = document.getElementById("input-file-btn")
+
+        # Trigger file explorer dialog when "INPUT FILE" button is clicked
+        def trigger_file_input(event=None):
+            if event:
+                event.preventDefault()
+            file_input.click()
+
+        # Handle when user selects their printing files
+        def handle_file_selection(event=None):
+            files = file_input.files
+            status_label = document.getElementById("file-status")
+            if files.length > 0:
+                file_name = files.item(0).name
+                if status_label:
+                    status_label.innerText = f"Selected: {file_name}"
+            else:
+                if status_label:
+                    status_label.innerText = "No file chosen"
+
+        # Handle when user selects their printing files
+        def handle_file_selection(event):
+            files = file_input.files
+            if files.length > 0:
+                file_names = [files.item(i).name for i in range(files.length)]
+                alert(f"File(s) successfully uploaded for printing:\n{', '.join(file_names)}")
+
+        # Bind the events using PyScript proxy
+        input_btn.addEventListener("click", create_proxy(trigger_file_input))
+        file_input.addEventListener("change", create_proxy(handle_file_selection))
+
+        #------------------------------------------------------------------------------------------
+        
+        #------------------------------------------------------------------------------------------
+        
+        # Grab About Us DOM elements
+        about_btn = document.getElementById("about-btn")
+        about_modal = document.getElementById("about-modal")
+        close_about_btn = document.getElementById("close-about-modal")
+
+        def open_about_modal(event):
+            event.preventDefault()
+            about_modal.style.display = "flex"
+
+        def close_about_modal(event=None):
+            about_modal.style.display = "none"
+
+        # Bind About Us events using create_proxy
+        about_btn.addEventListener("click", create_proxy(open_about_modal))
+        close_about_btn.addEventListener("click", create_proxy(close_about_modal))
+
+        #------------------------------------------------------------------------------------------
         
 
         # Handler ----------------------------------------------------------
@@ -173,6 +229,7 @@
                 event.preventDefault() 
                 open_modal(service_name) 
             return create_proxy(handle) 
+        
         
 
         # Bind Python functions directly to menu click events 
